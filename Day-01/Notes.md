@@ -1,244 +1,271 @@
-📘 SQL Learning – Week 1 Day 1
-Foundations of SQL (MySQL)
-1️⃣ What is SQL?
+# SQL Learning – Week 1 Day 1
 
-SQL (Structured Query Language) is a declarative language used to interact with relational databases.
+## Foundations of SQL (MySQL)
 
-Declarative means:
+---
 
-You describe what result you want, not how to compute it.
-The database engine decides the execution plan.
+## 1. What is SQL?
 
-Example:
+**SQL (Structured Query Language)** is a declarative language used to interact with relational databases.
 
+### Declarative Approach
+
+- You describe what result you want, not how to compute it
+- The database engine decides the execution plan
+
+### Example
+
+```sql
 SELECT * FROM employees WHERE salary > 50000;
+```
 
 We do not write loops or algorithms — the database optimizer handles that.
 
-2️⃣ Database Structure
+---
 
-Database → Container of tables
+## 2. Database Structure
 
-Table → Structured data (rows + columns)
-
-Row → Record
-
-Column → Attribute
+| Component | Description |
+|-----------|-------------|
+| **Database** | Container of tables |
+| **Table** | Structured data (rows + columns) |
+| **Row** | Record |
+| **Column** | Attribute |
 
 Similar to Excel, but optimized for millions of rows.
 
-3️⃣ Categories of SQL Statements
-DQL (Data Query Language)
+---
 
-SELECT
+## 3. Categories of SQL Statements
 
-DML (Data Manipulation Language)
+| Category | Commands |
+|----------|----------|
+| **DQL** (Data Query Language) | SELECT |
+| **DML** (Data Manipulation Language) | INSERT, UPDATE, DELETE |
+| **DDL** (Data Definition Language) | CREATE, ALTER, DROP |
+| **DCL** (Data Control Language) | GRANT, REVOKE |
 
-INSERT
+---
 
-UPDATE
+## 4. Core SELECT Structure
 
-DELETE
-
-DDL (Data Definition Language)
-
-CREATE
-
-ALTER
-
-DROP
-
-DCL (Data Control Language)
-
-GRANT
-
-REVOKE
-
-4️⃣ Core SELECT Structure
+```sql
 SELECT columns
 FROM table
 WHERE condition
 ORDER BY column
 LIMIT number;
-Logical Execution Order:
+```
 
-FROM
+### Logical Execution Order
 
-WHERE
+1. **FROM**
+2. **WHERE**
+3. **SELECT**
+4. **ORDER BY**
+5. **LIMIT**
 
-SELECT
+> **Note:** Even though `SELECT` is written first, it executes after filtering.
 
-ORDER BY
+---
 
-LIMIT
+## 5. Basic Query Examples
 
-Even though SELECT is written first, it executes after filtering.
+### Select all columns
 
-5️⃣ Basic Query Examples
-Select all columns
+```sql
 SELECT * FROM employees;
-Select specific columns
+```
+
+### Select specific columns
+
+```sql
 SELECT name, salary FROM employees;
-Filtering
+```
+
+### Filtering
+
+```sql
 SELECT * 
 FROM employees
 WHERE department = 'IT';
-Multiple conditions
+```
+
+### Multiple conditions
+
+```sql
 SELECT *
 FROM employees
 WHERE department = 'IT'
 AND salary > 85000;
-Sorting
+```
+
+### Sorting
+
+```sql
 SELECT *
 FROM employees
 ORDER BY salary DESC;
-Top N
+```
+
+### Top N rows
+
+```sql
 SELECT *
 FROM employees
 ORDER BY salary DESC
 LIMIT 2;
-6️⃣ NULL Concept (Very Important)
+```
 
-NULL means unknown value, not:
+---
 
-0
+## 6. NULL Concept (Very Important)
 
-Empty string
+**NULL** means unknown value, NOT:
+- `0`
+- Empty string
+- `False`
 
-False
+### SQL 3-Valued Logic
 
-SQL uses 3-valued logic:
+- **TRUE**
+- **FALSE**
+- **UNKNOWN**
 
-TRUE
+### Comparison with NULL
 
-FALSE
+```sql
+WHERE salary = NULL;      -- ❌ Incorrect
+WHERE salary IS NULL;     -- ✅ Correct
+```
 
-UNKNOWN
+**Important:** Comparison with NULL returns **UNKNOWN**, and `WHERE` only returns rows where the condition evaluates to `TRUE`.
 
-Example:
+---
 
-WHERE salary = NULL;      -- Incorrect
-WHERE salary IS NULL;     -- Correct
+## 7. COUNT() Aggregate Function
 
-Comparison with NULL returns UNKNOWN.
+**Aggregate functions** operate on multiple rows and return a single value.
 
-WHERE only returns rows where condition = TRUE.
+### COUNT Variants
 
-7️⃣ COUNT() Aggregate Function
+- **`COUNT(*)`** – Counts all rows
+- **`COUNT(column)`** – Counts only rows where the column IS NOT NULL
 
-Aggregate functions operate on multiple rows and return a single value.
+### Example
 
-COUNT(*)
+| id | salary |
+|----|--------|
+| 1  | 80000  |
+| 2  | NULL   |
+| 3  | 90000  |
 
-Counts all rows.
+- `COUNT(*)` = 3
+- `COUNT(salary)` = 2
 
-COUNT(column)
+---
 
-Counts only rows where column IS NOT NULL.
+## 8. Indexes (Performance Foundation)
 
-Example:
+### Without Index
 
-id	salary
-1	80000
-2	NULL
-3	90000
-COUNT(*) = 3
-COUNT(salary) = 2
-8️⃣ Indexes (Performance Foundation)
+- Full table scan
+- Time complexity ≈ **O(n)**
 
-Without index:
+### With Index (B-Tree)
 
-Full table scan
+- B-Tree search
+- Time complexity ≈ **O(log n) + O(k)**
+  - `n` = total rows
+  - `k` = matching rows
 
-Time complexity ≈ O(n)
+### Create Index
 
-With index:
-
-B-Tree search
-
-Time complexity ≈ O(log n) + O(k)
-
-n = total rows
-
-k = matching rows
-
-Create Index
+```sql
 CREATE INDEX idx_department ON employees(department);
-9️⃣ Composite Index
+```
+
+---
+
+## 9. Composite Index
+
+```sql
 CREATE INDEX idx_dept_salary 
 ON employees(department, salary);
-Works best when:
+```
 
-Query matches leftmost columns.
+### Works Best When
 
-Example:
+- Query matches **leftmost columns**
 
+#### Examples
+
+```sql
 WHERE department = 'IT'
 
 WHERE department = 'IT' AND salary > 85000
+```
 
-Does NOT help for:
+### Does NOT Help For
 
-WHERE salary > 85000 (alone)
+```sql
+WHERE salary > 85000  -- alone (not leftmost)
+```
 
-🔟 InnoDB Internal Behavior (High-Level)
+---
 
-In InnoDB:
+## 10. InnoDB Internal Behavior (High-Level)
 
-Primary key = clustered index
+### InnoDB Structure
 
-Secondary index stores:
+- **Primary key** = clustered index
+- **Secondary index** stores:
+  - Indexed column
+  - Primary key reference
 
-indexed column
+### When Using Secondary Index
 
-primary key reference
+1. MySQL searches index B-tree
+2. Finds matching primary keys
+3. Uses PK to fetch full row from data page
 
-When using secondary index:
+> **Why it matters:** `SELECT *` may require additional lookups beyond the index.
 
-MySQL searches index B-tree
+---
 
-Finds matching primary keys
+## 11. Why SELECT Specific Columns is Better
 
-Uses PK to fetch full row from data page
+### ❌ Avoid
 
-This is why SELECT * may require additional lookups.
-
-1️⃣1️⃣ Why SELECT Specific Columns is Better
-
-Avoid:
-
+```sql
 SELECT * FROM employees;
+```
 
-Better:
+### ✅ Better
 
+```sql
 SELECT name, salary FROM employees;
+```
 
-Reasons:
+### Reasons
 
-Reduces network transfer
+- Reduces network transfer
+- Reduces memory usage
+- Reduces I/O
+- Improves performance at scale
+- Cleaner backend design
 
-Reduces memory usage
+---
 
-Reduces I/O
+## 12. Key Takeaways
 
-Improves performance at scale
+- ✓ SQL is declarative
+- ✓ `WHERE` filters rows before `SELECT`
+- ✓ `NULL` introduces 3-valued logic
+- ✓ `COUNT(column)` ignores NULL
+- ✓ Indexes reduce scan time
+- ✓ Composite index follows leftmost rule
+- ✓ `ORDER BY` happens before `LIMIT`
+- ✓ Database optimizer chooses execution plan
 
-Cleaner backend design
-
-1️⃣2️⃣ Key Takeaways
-
-SQL is declarative
-
-WHERE filters rows before SELECT
-
-NULL introduces 3-valued logic
-
-COUNT(column) ignores NULL
-
-Indexes reduce scan time
-
-Composite index follows leftmost rule
-
-ORDER BY happens before LIMIT
-
-Database optimizer chooses execution plan
+---
