@@ -259,13 +259,13 @@ SELECT name, salary FROM employees;
 
 ## 12. Key Takeaways
 
-✓ SQL is declarative
-✓ `WHERE` filters rows before `SELECT`
-✓ `NULL` introduces 3-valued logic
-✓ `COUNT(column)` ignores NULL
-✓ Indexes reduce scan time
-✓ Composite index follows leftmost rule
-✓ `ORDER BY` happens before `LIMIT`
-✓ Database optimizer chooses execution plan
+- ✓ SQL is declarative
+- ✓ `WHERE` filters rows before `SELECT`
+- ✓ `NULL` introduces 3-valued logic
+- ✓ `COUNT(column)` ignores NULL
+- ✓ Indexes reduce scan time
+- ✓ Composite index follows leftmost rule
+- ✓ `ORDER BY` happens before `LIMIT`
+- ✓ Database optimizer chooses execution plan
 
 ---
