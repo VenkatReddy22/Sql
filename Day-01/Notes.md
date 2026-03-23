@@ -215,7 +215,7 @@ WHERE salary > 85000  -- alone (not leftmost)
 ---
 
 ## 10. InnoDB Internal Behavior (High-Level)
-
+InnoDB is the default storage engine for MySQL (and MariaDB). A storage engine is essentially the underlying component that handles how data is stored, retrieved, and managed on disk.
 ### InnoDB Structure
 
 - **Primary key** = clustered index
@@ -230,7 +230,9 @@ WHERE salary > 85000  -- alone (not leftmost)
 3. Uses PK to fetch full row from data page
 
 > **Why it matters:** `SELECT *` may require additional lookups beyond the index.
+Buffer pool — InnoDB caches both data and indexes in memory (the buffer pool), which significantly speeds up read/write operations by reducing disk I/O.
 
+InnoDB is the right choice for virtually all general-purpose workloads — especially anything involving transactions (banking, e-commerce, etc.), concurrent reads/writes, or relational data with foreign keys. It became MySQL's default engine in version 5.5 (2010) and has been the recommended choice ever since
 ---
 
 ## 11. Why SELECT Specific Columns is Better
